@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <cstring>
 #include <functional>
 
 const char CHAR_ESC   = '\\';
@@ -10,7 +11,7 @@ const char CHAR_ZERO  = 0;
 struct Command
 {
 	CommandType type;
-	int parameterCount;
+	size_t parameterCount;
 	const char* text;
 	CommandHandler handler;
 };
@@ -140,7 +141,7 @@ Parser::Result Parser::parse(char data, ParserState& state)
 	return result;
 }
 
-const char* Parser::parameter(int count, const char* parameters)
+const char* Parser::parameter(size_t count, const char* parameters)
 {
 	if (count == 0) { return parameters; }
 	size_t offset = 0;

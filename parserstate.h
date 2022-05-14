@@ -28,8 +28,8 @@ public:
 	inline int parameterIndex() const { return m_parameterIndex; }
 	inline void setParameterIndex(int index) { m_parameterIndex = index; }
 
-	inline int parameterCount() const { return m_parameterCount; }
-	inline void setParameterCount(int count) { m_parameterCount = count; }
+	inline size_t parameterCount() const { return m_parameterCount; }
+	inline void setParameterCount(size_t count) { m_parameterCount = count; }
 
 	inline CommandType commandType() const { return m_commandType; }
 	inline void setCommandType(CommandType type) { m_commandType = type; }
@@ -54,7 +54,7 @@ public:
 private:
 	int m_index = 0;
 	int m_parameterIndex = -1;
-	int m_parameterCount = 0;
+	size_t m_parameterCount = 0;
 	CommandType m_commandType = GetCommand;
 	TokenType m_expectedToken = CommandToken;
 	char m_params[MaxCommandSize];
