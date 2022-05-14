@@ -1,5 +1,7 @@
 #include "parser.h"
 
+#include <functional>
+
 const char CHAR_ESC   = '\\';
 const char CHAR_SPACE = ' ';
 const char CHAR_RET   = '\r';
@@ -9,20 +11,40 @@ struct Command
 {
 	CommandType type;
 	int parameterCount;
-
-	const char text[MaxCommandSize];
+	const char* text;
+	CommandHandler handler;
 };
+
+// если в команде есть пробел, перед ним надо поставить два слеша: "\\"
+
+static const char* TEXT__GET      = "GET";
+static const char* TEXT__LOG_DIR  = "LOG\\ DIR";
+static const char* TEXT__LOG_DUMP = "LOG\\ DUMP";
+static const char* TEXT__LOG_PAGE = "LOG\\ PAGE";
+static const char* TEXT__SET      = "SET";
 
 Command commands[] =
 {
-	{ GetCommand, 1, "GET" },
-	{ LogDirCommand, 0, "LOG\\ DIR" },
-	{ LogDumpCommand, 0, "LOG\\ DUMP" },
-	{ LogPageCommand, 0, "LOG\\ PAGE" },
-	{ SetCommand, 2, "SET" },
+// -- команды тут должны следовать в алфавитном порядке!!!
+// -- должно быть строгое соответствие между CommandType и описанных тут команд!!!
+
+//    CommandType    | ParamCount | CommandText    | CommandHandler
+	{ GetCommand,      1,           TEXT__GET,       nullptr },
+	{ LogDirCommand,   0,           TEXT__LOG_DIR,   nullptr },
+	{ LogDumpCommand,  0,           TEXT__LOG_DUMP,  nullptr },
+	{ LogPageCommand,  0,           TEXT__LOG_PAGE,  nullptr },
+	{ SetCommand,      2,           TEXT__SET,       nullptr },
 };
 
 // ------------------------------------------------------------------------
+
+void Parser::registerHandler(CommandType commandType, CommandHandler&& handler)
+{
+	int index = static_cast<int>(commandType);
+	if (index >= CommandCount) { return; }
+
+	commands[index].handler = handler;
+}
 
 Parser::Result Parser::parse(char data, ParserState& state)
 {
@@ -99,6 +121,10 @@ Parser::Result Parser::parse(char data, ParserState& state)
 	}
 
 	if (result == SuccessResult) {
+		Command& cmd = commands[command];
+		if (cmd.handler) {
+			cmd.handler(cmd.type, cmd.parameterCount, nullptr);
+		}
 	}
 
 	return result;

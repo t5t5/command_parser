@@ -5,16 +5,19 @@
 #pragma once
 #endif
 
+#include <functional>
+
 enum CommandType : char
 {
 	UnknownCommand = -1,
-	GetCommand,
+
+	GetCommand,				// Команды должны быть описаны в алфавитном порядке
 	LogDirCommand,
 	LogDumpCommand,
 	LogPageCommand,
 	SetCommand,
 
-	CommandCount,
+	CommandCount,			// обязательный последний параметр
 };
 
 enum TokenType : char
@@ -27,5 +30,7 @@ enum TokenType : char
 };
 
 static const int MaxCommandSize = 32;
+
+using CommandHandler = std::function<void(CommandType type, int, char* params)>;
 
 #endif // PARSERDEFINES_H

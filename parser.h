@@ -18,6 +18,7 @@ public:
 		IntermediateResult,
 	};
 
+	static void registerHandler(CommandType commandType, CommandHandler&& handler);
 	static Result parse(char data, ParserState& state);
 };
 
