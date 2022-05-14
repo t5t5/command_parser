@@ -22,15 +22,13 @@ enum CommandType : char
 
 enum TokenType : char
 {
-	UnknownToken,
 	CommandToken,
 	SeparatorToken,
 	ParameterToken,
-	EndToken,
 };
 
 static const int MaxCommandSize = 32;
 
-using CommandHandler = std::function<void(CommandType type, int, char* params)>;
+using CommandHandler = std::function<void(CommandType type, int, const char* params)>;
 
 #endif // PARSERDEFINES_H

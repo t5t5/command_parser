@@ -15,7 +15,7 @@ public:
 	inline void clear()
 	{
 		m_index = 0;
-		m_parameterIndex = 0;
+		m_parameterIndex = -1;
 		m_parameterCount = 0;
 		m_commandType = GetCommand;
 		m_expectedToken = CommandToken;
@@ -50,9 +50,10 @@ public:
 	}
 	inline void nextParam() { ++m_parameterCount; ++m_parameterIndex; }
 
+	inline const char* parameters() const { return &m_params[0]; }
 private:
 	int m_index = 0;
-	int m_parameterIndex = 0;
+	int m_parameterIndex = -1;
 	int m_parameterCount = 0;
 	CommandType m_commandType = GetCommand;
 	TokenType m_expectedToken = CommandToken;

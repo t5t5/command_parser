@@ -48,23 +48,24 @@ void Parser::registerHandler(CommandType commandType, CommandHandler&& handler)
 
 Parser::Result Parser::parse(char data, ParserState& state)
 {
-	int command = state.commandIndex();
-	if (command >= CommandCount) { return FailResult; }
+	int commandIndex = state.commandIndex();
+	if (commandIndex >= CommandCount) { return FailResult; }
 
 	Result result = IntermediateResult;
 
+	const Command& command = commands[commandIndex];
+
 	switch (state.expectedToken()) {
 	case CommandToken: {
-		int commandIndex = command;
 		for (; commandIndex < CommandCount; ++commandIndex) {
-			Command& expectedCommand = commands[commandIndex];
+			const Command& command = commands[commandIndex];
 			int index = state.index();
-			char expectedChar = expectedCommand.text[index];
+			char expectedChar = command.text[index];
 			if ((expectedChar == CHAR_ZERO) && (data == CHAR_RET)) {
 				result = SuccessResult;
 				break;
 			} else
-			if ((expectedChar == CHAR_ESC) && (data == expectedCommand.text[index + 1])) {
+			if ((expectedChar == CHAR_ESC) && (data == command.text[index + 1])) {
 				state.increaseIndex();
 				state.increaseIndex();
 				break;
@@ -93,9 +94,18 @@ Parser::Result Parser::parse(char data, ParserState& state)
 		if (data == CHAR_SPACE) { // параметр еще не начался
 			// ничего не делаем, ждем дальше
 		} else
-		if ((data == CHAR_ZERO) || (data == CHAR_RET)) { // ждали начала параметра, получили конец - ошибка
-			result = FailResult;
-			// проверить количество параметров
+		if ((data == CHAR_ZERO) || (data == CHAR_RET)) { // ждали начала параметра, получили конец
+//			// --- блок 1 - начало
+//			// если после последнего параметра не должно быть пробелов,
+//			// код в блоке 1 должен быть раскомменчен, а код в блоке 2 закомменчен
+//			result = FailResult;
+//			// --- блок 1 -  конец
+
+			// --- блок 2 - начало
+			result = (state.parameterCount() == command.parameterCount)
+				? SuccessResult
+				: FailResult;
+			// --- блок 2 -  конец
 		} else {
 			// приняли символ
 			state.nextParam();
@@ -109,8 +119,9 @@ Parser::Result Parser::parse(char data, ParserState& state)
 			state.setExpectedToken(SeparatorToken);
 		} else
 		if ((data == CHAR_ZERO) || data == (CHAR_RET)) { // закончили
-			// TODO: проверить количество параметров
-
+			result = (state.parameterCount() == command.parameterCount)
+				? SuccessResult
+				: FailResult;
 		} else {
 			state.appendParameterChar(data);
 		}
@@ -121,11 +132,20 @@ Parser::Result Parser::parse(char data, ParserState& state)
 	}
 
 	if (result == SuccessResult) {
-		Command& cmd = commands[command];
-		if (cmd.handler) {
-			cmd.handler(cmd.type, cmd.parameterCount, nullptr);
+		if (command.handler) {
+			command.handler(command.type, command.parameterCount, state.parameters());
 		}
 	}
 
 	return result;
+}
+
+const char* Parser::parameter(int count, const char* parameters)
+{
+	if (count == 0) { return parameters; }
+	size_t offset = 0;
+	for (size_t i = 0; i < count; ++i) {
+		offset += strlen(parameters + offset) + 1;
+	}
+	return &parameters[offset];
 }
