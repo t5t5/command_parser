@@ -12,4 +12,11 @@ UI_DIR = ./tmp/ui
 DESTDIR = $$BUILD_DIR
 
 SOURCES += \
-    command_parser.cpp
+    command_parser.cpp \
+    parser.cpp \
+    parserstate.cpp
+
+HEADERS += \
+    parser.h \
+    parserdefines.h \
+    parserstate.h
