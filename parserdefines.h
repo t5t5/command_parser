@@ -29,6 +29,6 @@ enum TokenType : char
 
 static const int MaxCommandSize = 32;
 
-using CommandHandler = std::function<void(CommandType type, size_t, const char* params)>;
+using CommandHandler = std::function<bool(CommandType type, size_t, const char* params)>;
 
 #endif // PARSERDEFINES_H

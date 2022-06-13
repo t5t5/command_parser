@@ -134,7 +134,8 @@ Parser::Result Parser::parse(char data, ParserState& state)
 
 	if (result == SuccessResult) {
 		if (command.handler) {
-			command.handler(command.type, command.parameterCount, state.parameters());
+			bool ok = command.handler(command.type, command.parameterCount, state.parameters());
+			if (!ok) { result = FailResult; }
 		}
 	}
 

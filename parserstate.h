@@ -19,6 +19,7 @@ public:
 		m_parameterCount = 0;
 		m_commandType = GetCommand;
 		m_expectedToken = CommandToken;
+		std::memset(m_params, 0, MaxCommandSize);
 	}
 
 	inline int index() const { return m_index; }
