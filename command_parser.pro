@@ -13,7 +13,8 @@ DESTDIR = $$BUILD_DIR
 
 SOURCES += \
     command_parser.cpp \
-    parser.cpp
+    parser.cpp \
+    parserstate.cpp
 
 HEADERS += \
     parser.h \

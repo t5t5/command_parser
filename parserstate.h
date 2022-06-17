@@ -10,17 +10,9 @@
 class ParserState
 {
 public:
-	ParserState() = default;
+	ParserState();
 
-	inline void clear()
-	{
-		m_index = 0;
-		m_parameterIndex = -1;
-		m_parameterCount = 0;
-		m_commandType = GetCommand;
-		m_expectedToken = CommandToken;
-		std::memset(m_params, 0, MaxCommandSize);
-	}
+	void clear();
 
 	inline int index() const { return m_index; }
 	inline void setIndex(int index) { m_index = index; }
@@ -41,18 +33,16 @@ public:
 	inline TokenType expectedToken() const { return m_expectedToken; }
 	inline void setExpectedToken(TokenType type) { m_expectedToken = type; }
 
-	inline bool appendParameterChar(char data)
-	{
-		if ((m_parameterIndex + 1) == MaxCommandSize) { return false; }
-		m_params[m_parameterIndex + 0] = data;
-		m_params[m_parameterIndex + 1] = 0;
-		++m_parameterIndex;
-		return true;
-	}
+	bool appendParameterChar(char data);
 	inline void nextParam() { ++m_parameterCount; ++m_parameterIndex; }
 
 	inline const char* parameters() const { return &m_params[0]; }
+
+	void registerHandler(CommandType commandType, CommandHandler&& handler);
+	void resetHandlers();
+	bool process() const;
 private:
+	CommandHandler handlers[CommandCount];
 	int m_index = 0;
 	int m_parameterIndex = -1;
 	size_t m_parameterCount = 0;

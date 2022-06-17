@@ -13,7 +13,6 @@ struct Command
 	CommandType type;
 	size_t parameterCount;
 	const char* text;
-	CommandHandler handler;
 };
 
 // если в команде есть пробел, перед ним надо поставить два слеша: "\\"
@@ -29,23 +28,15 @@ Command commands[] =
 // -- команды тут должны следовать в алфавитном порядке!!!
 // -- должно быть строгое соответствие между CommandType и описанных тут команд!!!
 
-//    CommandType    | ParamCount | CommandText    | CommandHandler
-	{ GetCommand,      1,           TEXT__GET,       nullptr },
-	{ LogDirCommand,   0,           TEXT__LOG_DIR,   nullptr },
-	{ LogDumpCommand,  0,           TEXT__LOG_DUMP,  nullptr },
-	{ LogPageCommand,  0,           TEXT__LOG_PAGE,  nullptr },
-	{ SetCommand,      2,           TEXT__SET,       nullptr },
+//    CommandType    | ParamCount | CommandText
+	{ GetCommand,      1,           TEXT__GET      },
+	{ LogDirCommand,   0,           TEXT__LOG_DIR  },
+	{ LogDumpCommand,  0,           TEXT__LOG_DUMP },
+	{ LogPageCommand,  0,           TEXT__LOG_PAGE },
+	{ SetCommand,      2,           TEXT__SET      },
 };
 
 // ------------------------------------------------------------------------
-
-void Parser::registerHandler(CommandType commandType, CommandHandler&& handler)
-{
-	int index = static_cast<int>(commandType);
-	if (index >= CommandCount) { return; }
-
-	commands[index].handler = handler;
-}
 
 Parser::Result Parser::parse(char data, ParserState& state)
 {
@@ -133,10 +124,8 @@ Parser::Result Parser::parse(char data, ParserState& state)
 	}
 
 	if (result == SuccessResult) {
-		if (command.handler) {
-			bool ok = command.handler(command.type, command.parameterCount, state.parameters());
-			if (!ok) { result = FailResult; }
-		}
+		bool ok = state.process();
+		if (!ok) { result = FailResult; }
 	}
 
 	return result;

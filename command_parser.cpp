@@ -89,11 +89,11 @@ bool CommandParser::handler_set(CommandType, size_t paramCount, const char* para
 
 void CommandParser::initTestCase()
 {
-	Parser::registerHandler(LogDirCommand, [this] (CommandType t, size_t c, const char* p) { return handler_logDir(t, c, p); } );
-	Parser::registerHandler(LogDumpCommand, [this] (CommandType t, size_t c, const char* p) { return handler_logDump(t, c, p); } );
-	Parser::registerHandler(LogPageCommand, [this] (CommandType t, size_t c, const char* p) { return handler_logPage(t, c, p); } );
-	Parser::registerHandler(GetCommand, [this] (CommandType t, size_t c, const char* p) { return handler_get(t, c, p); } );
-	Parser::registerHandler(SetCommand, [this] (CommandType t, size_t c, const char* p) { return handler_set(t, c, p); } );
+	state.registerHandler(LogDirCommand, [this] (CommandType t, size_t c, const char* p) { return handler_logDir(t, c, p); } );
+	state.registerHandler(LogDumpCommand, [this] (CommandType t, size_t c, const char* p) { return handler_logDump(t, c, p); } );
+	state.registerHandler(LogPageCommand, [this] (CommandType t, size_t c, const char* p) { return handler_logPage(t, c, p); } );
+	state.registerHandler(GetCommand, [this] (CommandType t, size_t c, const char* p) { return handler_get(t, c, p); } );
+	state.registerHandler(SetCommand, [this] (CommandType t, size_t c, const char* p) { return handler_set(t, c, p); } );
 }
 
 void CommandParser::test()

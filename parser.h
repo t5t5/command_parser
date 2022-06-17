@@ -18,7 +18,6 @@ public:
 		IntermediateResult,
 	};
 
-	static void registerHandler(CommandType commandType, CommandHandler&& handler);
 	static Result parse(char data, ParserState& state);
 
 	static const char* parameter(size_t count, const char* parameters);
