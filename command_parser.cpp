@@ -109,9 +109,11 @@ void CommandParser::initTestCase()
 
 void CommandParser::test()
 {
+	bool state = testCommand("\r\n\r\r\n\n\n\r");
+//	QVERIFY(state);
+	QVERIFY(testCommand("r\r\r\n\n\n\r\nGET UFM_FLOWSPEED\n"));
 	QVERIFY(testCommand("GET UFM_FLOWSPEED\r"));
-	QVERIFY(testCommand("GET UFM_FLOWSPEED\r"));
-	QVERIFY(testCommand("GET UFM_FLOWSPEED\r"));
+	QVERIFY(testCommand("GET UFM_FLOWSPEED\n"));
 	QVERIFY(testCommand("GET UFM_FLOWSPEED\r"));
 	QVERIFY(testCommand("LOG DUMP\r"));
 	QVERIFY(testCommand("LOG DIR\r"));

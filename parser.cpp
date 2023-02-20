@@ -6,6 +6,7 @@
 const char CHAR_ESC   = '\\';
 const char CHAR_SPACE = ' ';
 const char CHAR_RET   = '\r';
+const char CHAR_LF    = '\n';
 const char CHAR_ZERO  = 0;
 
 struct Command
@@ -42,6 +43,11 @@ Command commands[] =
 
 // ------------------------------------------------------------------------
 
+static bool isCrLf(char c)
+{
+	return (c == CHAR_RET) || (c == CHAR_LF);
+}
+
 Parser::Result Parser::parse(char data, ParserState& state)
 {
 	int commandIndex = state.commandIndex();
@@ -57,7 +63,7 @@ Parser::Result Parser::parse(char data, ParserState& state)
 			const Command& command = commands[commandIndex];
 			int index = state.index();
 			char expectedChar = command.text[index];
-			if ((expectedChar == CHAR_ZERO) && (data == CHAR_RET)) {
+			if ((expectedChar == CHAR_ZERO) && isCrLf(data)) {
 				result = SuccessResult;
 				break;
 			} else
@@ -90,7 +96,7 @@ Parser::Result Parser::parse(char data, ParserState& state)
 		if (data == CHAR_SPACE) { // параметр еще не начался
 			// ничего не делаем, ждем дальше
 		} else
-		if ((data == CHAR_ZERO) || (data == CHAR_RET)) { // ждали начала параметра, получили конец
+		if ((data == CHAR_ZERO) || isCrLf(data)) { // ждали начала параметра, получили конец
 //			// --- блок 1 - начало
 //			// если после последнего параметра не должно быть пробелов,
 //			// код в блоке 1 должен быть раскомменчен, а код в блоке 2 закомменчен
@@ -114,7 +120,7 @@ Parser::Result Parser::parse(char data, ParserState& state)
 		if (data == CHAR_SPACE) { // параметр закончился
 			state.setExpectedToken(SeparatorToken);
 		} else
-		if ((data == CHAR_ZERO) || data == (CHAR_RET)) { // закончили
+		if ((data == CHAR_ZERO) || isCrLf(data)) { // закончили
 			result = (state.parameterCount() == command.parameterCount)
 				? SuccessResult
 				: FailResult;
