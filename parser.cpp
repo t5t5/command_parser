@@ -18,6 +18,8 @@ struct Command
 // если в команде есть пробел, перед ним надо поставить два слеша: "\\"
 
 static const char* TEXT__GET      = "GET";
+static const char* TEXT__GKHZ      = "GKHZ";
+static const char* TEXT__LOG_CLEAN = "LOG\\ CLEAN";
 static const char* TEXT__LOG_DIR  = "LOG\\ DIR";
 static const char* TEXT__LOG_DUMP = "LOG\\ DUMP";
 static const char* TEXT__LOG_PAGE = "LOG\\ PAGE";
@@ -30,6 +32,8 @@ Command commands[] =
 
 //    CommandType    | ParamCount | CommandText
 	{ GetCommand,      1,           TEXT__GET      },
+	{ GkhzCommand,     0,           TEXT__GKHZ,    },
+	{ LogCleanCommand, 0,           TEXT__LOG_CLEAN },
 	{ LogDirCommand,   0,           TEXT__LOG_DIR  },
 	{ LogDumpCommand,  0,           TEXT__LOG_DUMP },
 	{ LogPageCommand,  0,           TEXT__LOG_PAGE },

@@ -16,10 +16,12 @@ private:
 	bool handler_logPage(CommandType, size_t paramCount, const char* params);
 	bool handler_get(CommandType, size_t paramCount, const char* params);
 	bool handler_set(CommandType, size_t paramCount, const char* params);
+	bool handler_gkhz(CommandType, size_t paramCount, const char* params);
 private slots:
 	void initTestCase();
 	void test();
 	void test_2();
+	void test_3();
 private:
 	ParserState state;
 };
@@ -71,7 +73,8 @@ bool CommandParser::handler_get(CommandType, size_t paramCount, const char* para
 	bool result =
 		(paramCount == 1) &&
 		(params) &&
-		(QString(Parser::parameter(0, params)) == "param");
+		((QString(Parser::parameter(0, params)) == "param") ||
+		 (QString(Parser::parameter(0, params)) ==  "UFM_FLOWSPEED"));
 	qDebug() << "get " << result;
 	return result;
 }
@@ -87,6 +90,13 @@ bool CommandParser::handler_set(CommandType, size_t paramCount, const char* para
 	return result;
 }
 
+bool CommandParser::handler_gkhz(CommandType, size_t paramCount, const char* params)
+{
+	bool result = paramCount == 0;
+	qDebug() << "gkhz " << result;
+	return result;
+}
+
 void CommandParser::initTestCase()
 {
 	state.registerHandler(LogDirCommand, [this] (CommandType t, size_t c, const char* p) { return handler_logDir(t, c, p); } );
@@ -94,10 +104,15 @@ void CommandParser::initTestCase()
 	state.registerHandler(LogPageCommand, [this] (CommandType t, size_t c, const char* p) { return handler_logPage(t, c, p); } );
 	state.registerHandler(GetCommand, [this] (CommandType t, size_t c, const char* p) { return handler_get(t, c, p); } );
 	state.registerHandler(SetCommand, [this] (CommandType t, size_t c, const char* p) { return handler_set(t, c, p); } );
+	state.registerHandler(GkhzCommand, [this] (CommandType t, size_t c, const char* p) { return handler_gkhz(t, c, p); } );
 }
 
 void CommandParser::test()
 {
+	QVERIFY(testCommand("GET UFM_FLOWSPEED\r"));
+	QVERIFY(testCommand("GET UFM_FLOWSPEED\r"));
+	QVERIFY(testCommand("GET UFM_FLOWSPEED\r"));
+	QVERIFY(testCommand("GET UFM_FLOWSPEED\r"));
 	QVERIFY(testCommand("LOG DUMP\r"));
 	QVERIFY(testCommand("LOG DIR\r"));
 	QVERIFY(testCommand("LOG PAGE\r"));
@@ -114,6 +129,17 @@ void CommandParser::test_2()
 	qDebug() << "----test_2----";
 	testCommand("polnayaerunda\rLOG DUMP\rSET param rrr\rGET\rtuttoje hren\r");
 	qDebug() << "----test_2----";
+}
+
+void CommandParser::test_3()
+{
+	qDebug() << "----test_3----";
+	QVERIFY(!testCommand("G"));
+	QVERIFY(!testCommand("K"));
+	QVERIFY(!testCommand("H"));
+	QVERIFY(!testCommand("Z"));
+	QVERIFY(testCommand("\r"));
+	qDebug() << "----test_3----";
 }
 
 QTEST_MAIN(CommandParser)

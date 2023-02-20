@@ -12,6 +12,8 @@ enum CommandType : char
 	UnknownCommand = -1,
 
 	GetCommand,				// Команды должны быть описаны в алфавитном порядке
+	GkhzCommand,
+	LogCleanCommand,
 	LogDirCommand,
 	LogDumpCommand,
 	LogPageCommand,
